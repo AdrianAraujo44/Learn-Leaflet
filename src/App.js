@@ -1,23 +1,26 @@
-import logo from './logo.svg';
+import React, { useState } from 'react'
 import './App.css';
+import Map from './components/Map';
 
 function App() {
+  const [selectPosition, setSelectPosition] = useState(null);
+
+  const getPlace = (place) => {
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&polygon=1&addressdetails=1&q=${place}`)
+      .then(res => res.json())
+      .then(data => {
+        setSelectPosition(data[0])
+      })
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1 className="title">Cadastrar Operação no Mapa</h1>
+      <input className="input" onBlur={(place) => { getPlace(place.target.value) }} />
+      <div className="map" style={{ width: "1024px", height: "528px" }}>
+        <Map selectPosition={selectPosition} />
+      </div>
+      <button>Salvar</button>
     </div>
   );
 }
